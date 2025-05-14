@@ -50,3 +50,45 @@ function removeRow(button) {
   const row = button.closest("tr");
   row.remove();
 }
+
+// タイムラインを生成（0:00〜23:00）
+function generateTimeline() {
+  const timeline = document.getElementById("timeline");
+  if (!timeline) return;
+
+  for (let hour = 0; hour < 24; hour++) {
+    const slot = document.createElement("div");
+    slot.className = "time-slot";
+    slot.dataset.hour = hour;
+    slot.innerHTML = `<span class="time-label">${hour}:00</span><span class="current-dot" style="display:none;">●</span>`;
+    timeline.appendChild(slot);
+  }
+}
+
+function updateCurrentTimeDot() {
+  const now = new Date();
+  const hour = now.getHours();
+  const timeStr = `${String(hour).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+  // すべてのドットを非表示にする
+  document.querySelectorAll(".current-dot").forEach(dot => dot.style.display = "none");
+
+  // 現在時刻のスロットに●を表示
+  const slot = document.querySelector(`.time-slot[data-hour='${hour}']`);
+  if (slot) {
+    const dot = slot.querySelector(".current-dot");
+    if (dot) {
+      dot.style.display = "inline";
+      dot.title = `現在時刻：${timeStr}`;
+    }
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  generateTimeline();
+  updateCurrentTimeDot();
+  setInterval(updateCurrentTimeDot, 60 * 1000);
+});
+
+
+
